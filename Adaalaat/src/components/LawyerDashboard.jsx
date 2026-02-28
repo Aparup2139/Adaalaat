@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import './LawyerDashboard.css'
 
 // ── Sample Data ───────────────────────────────────────────────
@@ -87,11 +88,6 @@ const Icons = {
             <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" />
         </svg>
     ),
-    Home: () => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-    ),
 }
 
 // ── LawyerDashboard Component ────────────────────────────────
@@ -111,31 +107,31 @@ function LawyerDashboard() {
     ]
 
     return (
-        <div className="dashboard-layout">
+        <div className="lawyer-dashboard-layout">
             {/* ── Sidebar ── */}
-            <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <div className="sidebar-brand">
-                    <div className="sidebar-brand-icon">A</div>
-                    <span className="sidebar-brand-text">ADAALAT</span>
+            <aside className={`lawyer-sidebar ${sidebarOpen ? 'open' : ''}`}>
+                <div className="lawyer-sidebar-brand">
+                    <div className="lawyer-sidebar-brand-icon">A</div>
+                    <Link to="/" className="lawyer-sidebar-brand-text">ADAALAT</Link>
                 </div>
 
-                <nav className="sidebar-nav">
-                    <span className="sidebar-section-label">Main</span>
+                <nav className="lawyer-sidebar-nav">
+                    <span className="lawyer-sidebar-section-label">Main</span>
                     {navMain.map(item => (
                         <button
                             key={item.label}
-                            className={`sidebar-link ${activeNav === item.label ? 'active' : ''}`}
+                            className={`lawyer-sidebar-link ${activeNav === item.label ? 'active' : ''}`}
                             onClick={() => { setActiveNav(item.label); setSidebarOpen(false) }}
                         >
                             <item.icon />{item.label}
                         </button>
                     ))}
 
-                    <span className="sidebar-section-label">System</span>
+                    <span className="lawyer-sidebar-section-label">System</span>
                     {navSecondary.map(item => (
                         <button
                             key={item.label}
-                            className={`sidebar-link ${activeNav === item.label ? 'active' : ''}`}
+                            className={`lawyer-sidebar-link ${activeNav === item.label ? 'active' : ''}`}
                             onClick={() => { setActiveNav(item.label); setSidebarOpen(false) }}
                         >
                             <item.icon />{item.label}
@@ -143,91 +139,91 @@ function LawyerDashboard() {
                     ))}
                 </nav>
 
-                <div className="sidebar-footer">
-                    <div className="sidebar-user">
-                        <div className="sidebar-avatar">AK</div>
-                        <div className="sidebar-user-info">
-                            <div className="sidebar-user-name">Adv. Arjun Khanna</div>
-                            <div className="sidebar-user-role">Senior Advocate</div>
+                <div className="lawyer-sidebar-footer">
+                    <div className="lawyer-sidebar-user">
+                        <div className="lawyer-sidebar-avatar">AK</div>
+                        <div className="lawyer-sidebar-user-info">
+                            <div className="lawyer-sidebar-user-name">Adv. Arjun Khanna</div>
+                            <div className="lawyer-sidebar-user-role">Senior Advocate</div>
                         </div>
                     </div>
                 </div>
             </aside>
 
             {/* ── Mobile Toggle ── */}
-            <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle sidebar">
+            <button className="lawyer-sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle sidebar">
                 <Icons.Menu />
             </button>
 
             {/* ── Main Content ── */}
-            <main className="dashboard-main">
+            <main className="lawyer-main">
                 {/* ── Top Bar ── */}
-                <header className="dashboard-topbar">
-                    <div className="topbar-left">
+                <header className="lawyer-topbar">
+                    <div className="lawyer-topbar-left">
                         <h1>Welcome back, Arjun 👋</h1>
                         <p>Here's what's happening with your practice today.</p>
                     </div>
-                    <div className="topbar-right">
-                        <button className="topbar-btn" aria-label="Search">
+                    <div className="lawyer-topbar-right">
+                        <button className="lawyer-topbar-btn" aria-label="Search">
                             <Icons.Search />
                         </button>
-                        <button className="topbar-btn" aria-label="Notifications">
+                        <button className="lawyer-topbar-btn" aria-label="Notifications">
                             <Icons.Bell />
                             <span className="notification-dot"></span>
                         </button>
-                        <div className="topbar-avatar">AK</div>
+                        <div className="lawyer-topbar-avatar">AK</div>
                     </div>
                 </header>
 
-                <div className="dashboard-content">
+                <div className="lawyer-content">
                     {/* ── Stats Cards ── */}
-                    <div className="stats-grid">
+                    <div className="lawyer-stats-grid">
                         {[
                             { value: '12', label: 'Active Cases', trend: '+3', dir: 'up', color: 'gold', icon: '⚖️' },
                             { value: '7', label: 'Pending Briefs', trend: '+2', dir: 'up', color: 'blue', icon: '📋' },
                             { value: '34', label: 'Documents Drafted', trend: '+8', dir: 'up', color: 'green', icon: '📄' },
                             { value: '21', label: 'Documents Sent', trend: '+5', dir: 'up', color: 'purple', icon: '📨' },
                         ].map((stat, i) => (
-                            <div key={i} className="stat-card dashboard-animate">
-                                <div className="stat-card-header">
-                                    <div className={`stat-icon ${stat.color}`}>{stat.icon}</div>
-                                    <span className={`stat-trend ${stat.dir}`}>
+                            <div key={i} className="lawyer-stat-card lawyer-dashboard-animate">
+                                <div className="lawyer-stat-card-header">
+                                    <div className={`lawyer-stat-icon ${stat.color}`}>{stat.icon}</div>
+                                    <span className={`lawyer-stat-trend ${stat.dir}`}>
                                         {stat.dir === 'up' ? '↑' : '↓'} {stat.trend}
                                     </span>
                                 </div>
-                                <div className="stat-value">{stat.value}</div>
-                                <div className="stat-label">{stat.label}</div>
+                                <div className="lawyer-stat-value">{stat.value}</div>
+                                <div className="lawyer-stat-label">{stat.label}</div>
                             </div>
                         ))}
                     </div>
 
                     {/* ── Smart Briefs + Send Paperwork ── */}
-                    <div className="content-grid">
+                    <div className="lawyer-content-grid">
                         {/* Smart Briefs Feed */}
-                        <div className="glass-card dashboard-animate">
-                            <div className="card-header">
-                                <div className="card-title">
+                        <div className="lawyer-glass-card lawyer-dashboard-animate">
+                            <div className="lawyer-card-header">
+                                <div className="lawyer-card-title">
                                     <Icons.Briefcase />
                                     Smart Briefs
                                 </div>
-                                <span className="card-badge">{sampleBriefs.length} New</span>
+                                <span className="lawyer-card-badge">{sampleBriefs.length} New</span>
                             </div>
-                            <div className="brief-list">
+                            <div className="lawyer-brief-list">
                                 {sampleBriefs.map((brief, i) => (
-                                    <div key={brief.id} className="brief-item">
-                                        <div className="brief-number">{String(i + 1).padStart(2, '0')}</div>
-                                        <div className="brief-info">
-                                            <div className="brief-title">{brief.title}</div>
-                                            <div className="brief-meta">
+                                    <div key={brief.id} className="lawyer-brief-item">
+                                        <div className="lawyer-brief-number">{String(i + 1).padStart(2, '0')}</div>
+                                        <div className="lawyer-brief-info">
+                                            <div className="lawyer-brief-title">{brief.title}</div>
+                                            <div className="lawyer-brief-meta">
                                                 <span>{brief.client}</span>
                                                 <span>•</span>
                                                 <span>{brief.time}</span>
                                             </div>
                                         </div>
-                                        <span className={`brief-priority ${brief.priority}`}>{brief.priority}</span>
-                                        <div className="brief-actions">
-                                            <button className="btn-accept" title="Accept"><Icons.Check /></button>
-                                            <button className="btn-decline" title="Decline"><Icons.X /></button>
+                                        <span className={`lawyer-brief-priority ${brief.priority}`}>{brief.priority}</span>
+                                        <div className="lawyer-brief-actions">
+                                            <button className="lawyer-btn-accept" title="Accept"><Icons.Check /></button>
+                                            <button className="lawyer-btn-decline" title="Decline"><Icons.X /></button>
                                         </div>
                                     </div>
                                 ))}
@@ -235,18 +231,18 @@ function LawyerDashboard() {
                         </div>
 
                         {/* Send Paperwork */}
-                        <div className="glass-card dashboard-animate">
-                            <div className="card-header">
-                                <div className="card-title">
+                        <div className="lawyer-glass-card lawyer-dashboard-animate">
+                            <div className="lawyer-card-header">
+                                <div className="lawyer-card-title">
                                     <Icons.Send />
                                     Send Paperwork
                                 </div>
                             </div>
 
-                            <div className="send-form">
-                                <div className="form-group">
-                                    <label className="form-label">Select Client</label>
-                                    <select className="form-select" defaultValue="">
+                            <div className="lawyer-send-form">
+                                <div className="lawyer-form-group">
+                                    <label className="lawyer-form-label">Select Client</label>
+                                    <select className="lawyer-form-select" defaultValue="">
                                         <option value="" disabled>Choose a client…</option>
                                         <option>Rajeev Mehta</option>
                                         <option>Sonal Kapoor</option>
@@ -255,47 +251,47 @@ function LawyerDashboard() {
                                     </select>
                                 </div>
 
-                                <div className="form-group">
-                                    <label className="form-label">Attach Document</label>
-                                    <div className="file-upload-area">
-                                        <div className="file-upload-icon">📎</div>
-                                        <div className="file-upload-text">
+                                <div className="lawyer-form-group">
+                                    <label className="lawyer-form-label">Attach Document</label>
+                                    <div className="lawyer-file-upload-area">
+                                        <div className="lawyer-file-upload-icon">📎</div>
+                                        <div className="lawyer-file-upload-text">
                                             <span>Click to upload</span> or drag and drop
                                             <br />PDF, DOCX up to 10MB
                                         </div>
                                     </div>
                                 </div>
 
-                                <button className="btn-send">
+                                <button className="lawyer-btn-send">
                                     <Icons.Send /> Send as PDF
                                 </button>
                             </div>
 
-                            <div className="sent-items-header">Recent Sent Items</div>
+                            <div className="lawyer-sent-items-header">Recent Sent Items</div>
                             {sampleSentItems.map(item => (
-                                <div key={item.id} className="sent-item">
-                                    <div className="sent-item-icon">📄</div>
-                                    <div className="sent-item-info">
-                                        <div className="sent-item-name">{item.name}</div>
-                                        <div className="sent-item-date">{item.client} · {item.date}</div>
+                                <div key={item.id} className="lawyer-sent-item">
+                                    <div className="lawyer-sent-item-icon">📄</div>
+                                    <div className="lawyer-sent-item-info">
+                                        <div className="lawyer-sent-item-name">{item.name}</div>
+                                        <div className="lawyer-sent-item-date">{item.client} · {item.date}</div>
                                     </div>
-                                    <span className={`delivery-status ${item.status}`}>{item.status}</span>
+                                    <span className={`lawyer-delivery-status ${item.status}`}>{item.status}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     {/* ── Recent Documents Table ── */}
-                    <div className="glass-card dashboard-animate">
-                        <div className="card-header">
-                            <div className="card-title">
+                    <div className="lawyer-glass-card lawyer-dashboard-animate">
+                        <div className="lawyer-card-header">
+                            <div className="lawyer-card-title">
                                 <Icons.FileText />
                                 Recent Documents
                             </div>
-                            <span className="card-badge">{sampleDocuments.length} Total</span>
+                            <span className="lawyer-card-badge">{sampleDocuments.length} Total</span>
                         </div>
-                        <div className="documents-table-wrapper">
-                            <table className="documents-table">
+                        <div className="lawyer-documents-table-wrapper">
+                            <table className="lawyer-documents-table">
                                 <thead>
                                     <tr>
                                         <th>Document</th>
@@ -308,15 +304,15 @@ function LawyerDashboard() {
                                     {sampleDocuments.map(doc => (
                                         <tr key={doc.id}>
                                             <td>
-                                                <div className="doc-name">
-                                                    <div className="doc-icon">📑</div>
+                                                <div className="lawyer-doc-name">
+                                                    <div className="lawyer-doc-icon">📑</div>
                                                     {doc.name}
                                                 </div>
                                             </td>
                                             <td>{doc.type}</td>
                                             <td>{doc.date}</td>
                                             <td>
-                                                <span className={`status-badge ${doc.status === 'sent' ? 'sent-status' : doc.status}`}>
+                                                <span className={`lawyer-status-badge ${doc.status === 'sent' ? 'sent-status' : doc.status}`}>
                                                     {doc.status}
                                                 </span>
                                             </td>
@@ -330,11 +326,11 @@ function LawyerDashboard() {
             </main>
 
             {/* ── Quick Action FABs ── */}
-            <div className="quick-actions">
-                <button className="quick-action-btn primary" title="New Document">
+            <div className="lawyer-quick-actions">
+                <button className="lawyer-quick-action-btn primary" title="New Document">
                     <Icons.Plus />
                 </button>
-                <button className="quick-action-btn" title="Send Paperwork">
+                <button className="lawyer-quick-action-btn" title="Send Paperwork">
                     <Icons.Send />
                 </button>
             </div>

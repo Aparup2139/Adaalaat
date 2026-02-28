@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<ClientDashboard />} />
-        <Route path="/lawyer/dashboard" element={<LawyerDashboard />} />
+        <Route path="/lawyer-dashboard" element={<LawyerDashboard />} />
         <Route path="/find-lawyer" element={<FindLawyer />} />
       </Routes>
     </BrowserRouter>
