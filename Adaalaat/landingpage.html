@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaalat - Digital Justice Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-gold: #c5a059;
+            --color-gold-light: #e6c888;
+            --color-dark: #0f0c08;
+            --color-brown: #2c1e16;
+            --color-cream: #f5f5f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-dark);
+            color: var(--color-cream);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Animation Keyframes */
+        @keyframes swayBeam {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(4deg); }
+            75% { transform: rotate(-4deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes counterSway {
+            /* Exact opposite of swayBeam to keep pans vertical */
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-4deg); }
+            75% { transform: rotate(4deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes grain {
+            0%, 100% { transform:translate(0, 0) }
+            10% { transform:translate(-5%, -10%) }
+            20% { transform:translate(-15%, 5%) }
+            30% { transform:translate(7%, -25%) }
+            40% { transform:translate(-5%, 25%) }
+            50% { transform:translate(-15%, 10%) }
+            60% { transform:translate(15%, 0%) }
+            70% { transform:translate(0%, 15%) }
+            80% { transform:translate(3%, 35%) }
+            90% { transform:translate(-10%, 10%) }
+        }
+
+        /* Applied Animations */
+        .scales-container {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* FIX: Transform Box and Origin 
+           Using nested groups in SVG, so we rotate around local (0,0)
+        */
+        .balance-beam {
+            transform-box: fill-box;
+            transform-origin: 0 0; /* Pivot exactly at the center connection */
+            animation: swayBeam 8s ease-in-out infinite;
+        }
+
+        .pan-item {
+            transform-box: fill-box;
+            transform-origin: 0 0; /* Rotate around the chain attachment point */
+            animation: counterSway 8s ease-in-out infinite;
+        }
+
+        .fade-in-up {
+            animation: fadeIn 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-100 { animation-delay: 0.2s; }
+        .delay-200 { animation-delay: 0.4s; }
+        .delay-300 { animation-delay: 0.6s; }
+
+        /* Custom Gradients & Textures */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-light), var(--color-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .bg-noise {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            animation: grain 8s steps(10) infinite;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.05;
+        }
+        
+        .glass-btn {
+            background: rgba(197, 160, 89, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-btn:hover {
+            background: rgba(197, 160, 89, 0.2);
+            border-color: rgba(197, 160, 89, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.2);
+        }
+
+        /* SVG Glow */
+        .svg-glow {
+            filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.25));
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col selection:bg-yellow-900 selection:text-white">
+
+    <!-- Noise Texture Overlay -->
+    <div class="bg-noise"></div>
+
+    <!-- Background decorative gradients -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-yellow-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-900/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 w-full px-6 py-6 md:px-12 flex justify-between items-center border-b border-white/5 bg-[#0f0c08]/80 backdrop-blur-md sticky top-0">
+        <div class="flex items-center gap-3">
+            <!-- Mini Logo Icon -->
+            <div class="w-8 h-8 rounded border border-[#c5a059] flex items-center justify-center">
+                <span class="text-[#c5a059] font-serif font-bold text-lg">A</span>
+            </div>
+            <a href="#" class="text-2xl md:text-3xl font-bold tracking-widest text-white brand-font hover:text-[#c5a059] transition-colors duration-300">
+                ADAALAT
+            </a>
+        </div>
+
+        <div class="hidden md:flex items-center gap-6">
+            <a href="#" class="text-sm font-medium text-gray-400 hover:text-[#c5a059] transition-colors">How it Works</a>
+            <a href="#" class="text-sm font-medium text-gray-400 hover:text-[#c5a059] transition-colors">Services</a>
+            
+            <div class="h-4 w-px bg-white/10"></div>
+            
+            <a href="#" class="text-sm font-semibold text-white hover:text-[#c5a059] transition-colors px-2">Login</a>
+            <a href="#" class="glass-btn px-6 py-2 rounded-sm text-[#c5a059] text-sm font-semibold tracking-wide uppercase">
+                Sign Up
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-white hover:text-[#c5a059]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-grow flex flex-col lg:flex-row items-center justify-center px-6 md:px-12 py-12 lg:py-0 max-w-7xl mx-auto w-full gap-12 lg:gap-0">
+        
+        <!-- Left Text Section (Mobile Order 2, Desktop Order 1) -->
+        <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left order-2 lg:order-1 space-y-8">
+            <div class="space-y-4">
+                <div class="inline-block px-3 py-1 border border-[#c5a059]/30 rounded-full bg-[#c5a059]/5 mb-2 fade-in-up">
+                    <span class="text-[#c5a059] text-xs font-semibold tracking-widest uppercase">The Future of Law</span>
+                </div>
+                
+                <h1 class="text-4xl md:text-6xl lg:text-7xl leading-tight font-bold fade-in-up delay-100">
+                    Justice <br/>
+                    <span class="gold-gradient-text">Delivered.</span>
+                </h1>
+                
+                <p class="text-gray-400 text-lg md:text-xl max-w-lg mx-auto lg:mx-0 font-light leading-relaxed fade-in-up delay-200">
+                    A secure, transparent, and efficient platform connecting you to the legal system. Log in to manage your cases or sign up to find representation.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto fade-in-up delay-300">
+                <button class="bg-[#c5a059] hover:bg-[#b08d4b] text-[#0f0c08] px-8 py-4 rounded-sm font-bold tracking-wide transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(197,160,89,0.3)]">
+                    Get Started
+                </button>
+                <button class="border border-white/20 hover:border-[#c5a059] text-white hover:text-[#c5a059] px-8 py-4 rounded-sm font-semibold tracking-wide transition-all hover:bg-white/5">
+                    Consult an Expert
+                </button>
+            </div>
+
+            <div class="flex items-center gap-6 pt-4 fade-in-up delay-300">
+                <div class="flex -space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-700 border-2 border-[#0f0c08]"></div>
+                    <div class="w-10 h-10 rounded-full bg-gray-600 border-2 border-[#0f0c08]"></div>
+                    <div class="w-10 h-10 rounded-full bg-gray-500 border-2 border-[#0f0c08]"></div>
+                </div>
+                <div class="text-sm text-gray-400">
+                    <span class="text-white font-bold">2,000+</span> Lawyers Active
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Graphic Section (Scales) (Mobile Order 1, Desktop Order 2) -->
+        <div class="w-full lg:w-1/2 flex justify-center items-center order-1 lg:order-2">
+            <div class="scales-container relative w-full max-w-[500px] aspect-square">
+                <!-- Glowing backdrop behind scales -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-[#c5a059]/20 to-transparent rounded-full blur-3xl transform scale-75"></div>
+                
+                <!-- Scales SVG -->
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" class="w-full h-full svg-glow">
+                    <!-- Definitions for gradients -->
+                    <defs>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f8e7b9;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#c5a059;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8a6e36;stop-opacity:1" />
+                        </linearGradient>
+                        <filter id="shadow">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
+                        </filter>
+                    </defs>
+
+                    <!-- Central Pole Group (Centered at bottom) -->
+                    <g transform="translate(200, 380)">
+                        <!-- Base -->
+                        <path d="M-40,0 Q0,-20 40,0 L50,10 L-50,10 Z" fill="url(#goldGrad)" />
+                        <!-- Pillar -->
+                        <rect x="-4" y="-340" width="8" height="350" fill="url(#goldGrad)" />
+                        <!-- Top Finial -->
+                        <circle cx="0" cy="-350" r="10" fill="url(#goldGrad)" />
+                    </g>
+
+                    <!-- 
+                       Animation Container: Positioned exactly at the pivot point (Top of Pole).
+                       Coordinates: x=200, y=40 (since 380 - 340 = 40) 
+                    -->
+                    <g transform="translate(200, 40)">
+                        
+                        <!-- Rotatable Beam Group -->
+                        <g class="balance-beam">
+                            
+                            <!-- The Horizontal Beam Itself -->
+                            <path d="M-140,0 L140,0 L135,5 L-135,5 Z" fill="url(#goldGrad)" filter="url(#shadow)" />
+                            <circle cx="0" cy="2" r="6" fill="#fff" stroke="#c5a059" stroke-width="2"/>
+
+                            <!-- Left Pan Assembly -->
+                            <g transform="translate(-130, 0)">
+                                <!-- This inner group rotates counter to the beam to stay vertical -->
+                                <g class="pan-item">
+                                    <line x1="0" y1="0" x2="-30" y2="100" stroke="#e6c888" stroke-width="1.5" />
+                                    <line x1="0" y1="0" x2="30" y2="100" stroke="#e6c888" stroke-width="1.5" />
+                                    <line x1="0" y1="0" x2="0" y2="100" stroke="#e6c888" stroke-width="1.5" />
+                                    <path d="M-35,100 Q0,135 35,100 Z" fill="url(#goldGrad)" opacity="0.9" />
+                                </g>
+                            </g>
+
+                            <!-- Right Pan Assembly -->
+                            <g transform="translate(130, 0)">
+                                <g class="pan-item">
+                                    <line x1="0" y1="0" x2="-30" y2="100" stroke="#e6c888" stroke-width="1.5" />
+                                    <line x1="0" y1="0" x2="30" y2="100" stroke="#e6c888" stroke-width="1.5" />
+                                    <line x1="0" y1="0" x2="0" y2="100" stroke="#e6c888" stroke-width="1.5" />
+                                    <path d="M-35,100 Q0,135 35,100 Z" fill="url(#goldGrad)" opacity="0.9" />
+                                </g>
+                            </g>
+
+                        </g>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="relative z-10 w-full py-6 text-center border-t border-white/5 text-gray-500 text-xs md:text-sm">
+        <p>&copy; 2024 Adaalat Legal Technologies. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
