@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './ClientDashboard.css'
 import './LandingPage.css'
 
@@ -94,6 +94,7 @@ function generateAIResponse(query) {
 }
 
 function ClientDashboard() {
+    const navigate = useNavigate()
     const [messages, setMessages] = useState([])
     const [inputValue, setInputValue] = useState('')
     const [isTyping, setIsTyping] = useState(false)
@@ -157,7 +158,7 @@ function ClientDashboard() {
     return (
         <div className="dashboard-layout">
             {/* Sidebar */}
-            <aside className={`dashboard-sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
+            <aside className={`dashboard-sidebar ${(!sidebarOpen || hasMessages) ? 'collapsed' : ''}`}>
                 <div className="sidebar-header">
                     <div className="flex items-center gap-2 mb-4">
                         <div className="w-7 h-7 rounded border border-[#c5a059] flex items-center justify-center">
@@ -304,7 +305,7 @@ function ClientDashboard() {
                                             </span>
                                         </div>
 
-                                        <button className="find-lawyer-btn">
+                                        <button className="find-lawyer-btn" onClick={() => navigate('/find-lawyer', { state: { area: msg.area, query: messages.filter(m => m.type === 'user').slice(-1)[0]?.text || '' } })}>
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
