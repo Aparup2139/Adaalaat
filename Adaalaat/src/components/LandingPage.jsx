@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './LandingPage.css'
 
 function LandingPage() {
@@ -31,10 +32,10 @@ function LandingPage() {
 
                     <div className="h-4 w-px bg-white/10"></div>
 
-                    <a href="#" className="text-sm font-semibold text-white hover:text-[#c5a059] transition-colors px-2">Login</a>
-                    <a href="#" className="glass-btn px-6 py-2 rounded-sm text-[#c5a059] text-sm font-semibold tracking-wide uppercase">
+                    <Link to="/auth?mode=login" className="text-sm font-semibold text-white hover:text-[#c5a059] transition-colors px-2">Login</Link>
+                    <Link to="/auth?mode=signup" className="glass-btn px-6 py-2 rounded-sm text-[#c5a059] text-sm font-semibold tracking-wide uppercase">
                         Sign Up
-                    </a>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -66,9 +67,9 @@ function LandingPage() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto fade-in-up delay-300">
-                        <button className="bg-[#c5a059] hover:bg-[#b08d4b] text-[#0f0c08] px-8 py-4 rounded-sm font-bold tracking-wide transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(197,160,89,0.3)]">
+                        <Link to="/auth?mode=signup" className="bg-[#c5a059] hover:bg-[#b08d4b] text-[#0f0c08] px-8 py-4 rounded-sm font-bold tracking-wide transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(197,160,89,0.3)] text-center">
                             Get Started
-                        </button>
+                        </Link>
                         <button className="border border-white/20 hover:border-[#c5a059] text-white hover:text-[#c5a059] px-8 py-4 rounded-sm font-semibold tracking-wide transition-all hover:bg-white/5">
                             Consult an Expert
                         </button>
