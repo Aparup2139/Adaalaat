@@ -44,7 +44,7 @@ function AuthPage() {
         if (signupData.role === 'client') {
             navigate('/dashboard')
         } else {
-            navigate('/dashboard')
+            navigate('/lawyer-dashboard')
         }
     }
 

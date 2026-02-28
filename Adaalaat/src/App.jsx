@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import LandingPage from './components/LandingPage'
 import AuthPage from './components/AuthPage'
 import ClientDashboard from './components/ClientDashboard'
+import LawyerDashboard from './components/LawyerDashboard'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<ClientDashboard />} />
+        <Route path="/lawyer-dashboard" element={<LawyerDashboard />} />
       </Routes>
     </BrowserRouter>
   )
