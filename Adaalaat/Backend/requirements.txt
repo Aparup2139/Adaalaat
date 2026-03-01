@@ -1,0 +1,29 @@
+# ── Core Framework ──
+flask==3.1.0
+flask-cors==5.0.1
+python-dotenv==1.0.1
+gunicorn==23.0.0
+PyJWT==2.10.1
+
+# ── HuggingFace (Inference API — no local models needed) ──
+huggingface_hub
+numpy
+
+# ── LlamaIndex (Agentic RAG) ──
+llama-index-core
+llama-index-embeddings-huggingface
+llama-index-llms-huggingface
+
+# ── PDF Processing ──
+pypdf
+
+# ── Web Search ──
+requests
+
+# ── Async Support ──
+nest-asyncio
+
+# ── Database (Supabase) ──
+supabase
+
+python-dotenv

@@ -1,0 +1,21 @@
+{
+    "embedding": {
+        "model_name": "BAAI/bge-small-en-v1.5",
+        "dimension": 384
+    },
+    "llm": {
+        "model_name": "meta-llama/Llama-3.1-8B-Instruct:novita",
+        "max_new_tokens": 1024,
+        "temperature": 0.3
+    },
+    "rag_agent": {
+        "chunk_top_k": 8,
+        "chunk_size": 512,
+        "chunk_overlap": 50
+    },
+    "web_search": {
+        "provider": "serper",
+        "api_key_env": "SERPER_API_KEY",
+        "num_results": 5
+    }
+}
