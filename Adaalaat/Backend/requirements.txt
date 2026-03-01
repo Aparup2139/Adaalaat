@@ -27,3 +27,4 @@ nest-asyncio
 supabase
 
 python-dotenv
+llama-index-llms-together

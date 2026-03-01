@@ -29,9 +29,9 @@ class HFInferenceLLM(LLM):
     """LlamaIndex-compatible LLM that calls the HuggingFace Inference API."""
 
     # Use a clean name for LlamaIndex metadata (no colons)
-    model_name: str = "meta-llama-Llama-3.1-8B-Instruct"
+    model_name: str = "meta-llama/Llama-3.1-8B-Instruct"
     # The actual API model identifier (may contain provider routing like :novita)
-    api_model: str = "meta-llama/Llama-3.1-8B-Instruct:novita"
+    api_model: str = "meta-llama/Llama-3.1-8B-Instruct"
     hf_token: str = ""
     max_tokens: int = 1024
     temperature: float = 0.3
@@ -45,7 +45,7 @@ class HFInferenceLLM(LLM):
         env_token = os.environ.get("HUGGINGFACE_TOKEN", "") or os.environ.get("HF_TOKEN", "")
 
         # The full model name with provider routing (for API calls)
-        full_model = model_name or os.environ.get("LLM_MODEL", "meta-llama/Llama-3.1-8B-Instruct:novita")
+        full_model = model_name or os.environ.get("LLM_MODEL", "meta-llama/Llama-3.1-8B-Instruct")
         # Clean name for LlamaIndex metadata (replace invalid chars)
         clean_name = full_model.replace(":", "-").replace("/", "-")
 
@@ -81,11 +81,10 @@ class HFInferenceLLM(LLM):
         hf_messages = self._convert_messages(messages)
 
         try:
+            # We remove max_tokens and temperature here so the HF Router doesn't reject it
             completion = self._client.chat.completions.create(
-                model=self.api_model,  # Use the full model name with provider
-                messages=hf_messages,
-                max_tokens=kwargs.get("max_tokens", self.max_tokens),
-                temperature=kwargs.get("temperature", self.temperature),
+                model=self.api_model,
+                messages=hf_messages
             )
 
             content = completion.choices[0].message.content
@@ -100,7 +99,6 @@ class HFInferenceLLM(LLM):
                     content=f"I encountered an error processing your request: {str(e)}",
                 ),
             )
-
     async def achat(self, messages: Sequence[ChatMessage], **kwargs) -> ChatResponse:
         return self.chat(messages, **kwargs)
 

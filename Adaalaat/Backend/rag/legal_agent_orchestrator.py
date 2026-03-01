@@ -7,18 +7,17 @@ Architecture:
     ┌─────────────┐       ┌───────────────┐
     │   Decider    │──────▶│  RAG Search   │──▶ Local PDF (in-memory)
     │   (Router)   │       └───────────────┘
-    │              │       ┌───────────────┐
-    │              │──────▶│  Web Search   │──▶ Serper API
-    └──────┬───────┘       └───────────────┘
+    └──────┬───────┘
            │
     ┌──────▼───────┐
     │  Synthesizer │──▶ Final Legal Advisory (Llama-3.1-8B)
     └──────────────┘
 
 Pipeline:
-    1. Decider classifies the query → LEGAL_RAG / WEB_SEARCH / BOTH / GENERAL
+    1. Decider classifies the query → LEGAL_RAG / GENERAL
     2. RAG search retrieves from the local PDF embeddings
-    3. Web search queries the web
+    3. If RAG yields no results, the LLM responds from its own knowledge
+       with a disclaimer (LLM fallback)
     4. Synthesizer (Llama-3.1-8B) merges context into a legal advisory
 """
 
@@ -30,7 +29,6 @@ from typing import List, Optional
 from llama_index.core.llms import ChatMessage
 
 from rag.local_pdf_retriever import search as pdf_search
-from rag.web_search_service import WebSearchService
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +44,6 @@ class LegalAgentOrchestrator:
         with open(config_path, "r") as f:
             self.config = json.load(f)
 
-        self.web_search_service = WebSearchService(config_path=config_path)
         self.llm = llm
 
         # Pre-load the PDF embeddings on init
@@ -65,10 +62,8 @@ Respond ONLY with a single, valid JSON object (no markdown, no explanation):
 {"decision": "LEGAL_RAG", "search_query": "the rewritten search query"}
 
 Rules for the "decision" field:
-- LEGAL_RAG: For questions about laws, tenant rights, property disputes, divorce, consumer rights, etc.
-- WEB_SEARCH: For highly recent events or verifying if a specific new bill has passed recently.
-- BOTH: If comparing established law with recent news.
-- GENERAL: For greetings or meta-questions.
+- LEGAL_RAG: For questions about laws, tenant rights, property disputes, divorce, consumer rights, legal procedures, statutes, or any legal topic.
+- GENERAL: For greetings, meta-questions, or non-legal queries.
 
 Rules for "search_query": rewrite the user's query into a clear, standalone legal search query. If GENERAL, set to null."""
 
@@ -85,6 +80,20 @@ CRITICAL RULES:
    - Relevant statutes or laws cited (if found in context)
 5. Be empathetic but factual."""
 
+        self.llm_fallback_prompt = """You are an AI Legal Assistant for the Adaalat legal advisory platform. The user asked a legal question, but no relevant documents were found in our local legal database.
+
+CRITICAL RULES:
+1. You are an AI, not a licensed attorney. Include a brief disclaimer.
+2. Answer using your general legal knowledge to the best of your ability.
+3. CLEARLY STATE at the beginning of your response that this answer is based on general AI knowledge and NOT from verified legal documents in our database.
+4. Structure your response clearly with:
+   - The relevant legal area
+   - A clear analysis of the situation
+   - Concrete recommended next steps
+   - Any relevant statutes or laws you are aware of (cite them carefully)
+5. Strongly recommend consulting a qualified lawyer for verified legal advice.
+6. Be empathetic but factual."""
+
         self.last_search_sources = []
 
     # ── Direct Tool Calls ───────────────────────────────────────
@@ -99,7 +108,7 @@ CRITICAL RULES:
             results = pdf_search(query, top_k=chunk_top_k)
 
             if not results:
-                return "No relevant statutes or precedents found in the legal document."
+                return ""
 
             formatted_chunks = []
             for r in results:
@@ -114,19 +123,7 @@ CRITICAL RULES:
 
         except Exception as e:
             logger.error(f"[RAG] Local PDF search failed: {e}")
-            return f"Search failed: {str(e)}"
-
-    def _perform_web_search(self, query: str) -> str:
-        """Perform a web search for recent legal information."""
-        logger.info(f"[WEB] Searching web for: '{query}'")
-
-        try:
-            results = self.web_search_service.search(query)
-            logger.info("[WEB] Web search completed")
-            return results
-        except Exception as e:
-            logger.error(f"[WEB] Web search failed: {e}")
-            return f"Web search failed: {str(e)}"
+            return ""
 
     def _normalize_chat_history(self, history: list) -> List[ChatMessage]:
         """Normalize chat history into LlamaIndex ChatMessage format."""
@@ -145,7 +142,6 @@ CRITICAL RULES:
     async def run_async(
         self,
         query: str,
-        allow_web: bool = True,
         history: Optional[list] = None,
     ):
         """
@@ -154,7 +150,8 @@ CRITICAL RULES:
         Steps:
             1. Decider classifies the query (LLM call)
             2. Direct tool calls to retrieve context
-            3. Synthesizer generates the final advisory (LLM call)
+            3. If RAG returns results → Synthesizer merges them into advisory
+            4. If RAG returns nothing → LLM fallback from general knowledge
         """
         logger.info(f"\n--- New Legal Query: '{query}' ---")
         history = history or []
@@ -187,19 +184,9 @@ CRITICAL RULES:
             logger.warning(f"[DECIDER] Failed to parse, defaulting to LEGAL_RAG: {e}")
             decision, search_query = "LEGAL_RAG", query
 
-        context = ""
         self.last_search_sources = []
 
         # ── 2. Direct Tool Calls ────────────────────────────────
-        if decision in ["LEGAL_RAG", "BOTH"]:
-            rag_result = self._search_legal_database(search_query)
-            context += f"Legal Database Context:\n{rag_result}\n\n"
-
-        if decision in ["WEB_SEARCH", "BOTH"] and allow_web:
-            web_result = self._perform_web_search(search_query)
-            context += f"Web Search Results:\n{web_result}\n\n"
-
-        # ── 3. Synthesis Phase ──────────────────────────────────
         if decision == "GENERAL":
             messages = [
                 ChatMessage(role="system", content=self.synthesizer_prompt),
@@ -209,16 +196,30 @@ CRITICAL RULES:
             final_response = await self.llm.achat(messages=messages)
             return {"answer": final_response.message.content, "sources": []}
 
-        synthesis_messages = [
-            ChatMessage(
-                role="system",
-                content=f"{self.synthesizer_prompt}\n\nRelevant Legal Context:\n{context}",
-            ),
-            *normalized_history,
-            ChatMessage(role="user", content=query),
-        ]
+        # ── 3. RAG Search ───────────────────────────────────────
+        rag_result = self._search_legal_database(search_query)
 
-        logger.info("[SYNTH] Generating final advisory...")
+        # ── 4. Synthesis / LLM Fallback ─────────────────────────
+        if rag_result:
+            # RAG returned context → synthesize with it
+            synthesis_messages = [
+                ChatMessage(
+                    role="system",
+                    content=f"{self.synthesizer_prompt}\n\nRelevant Legal Context:\n{rag_result}",
+                ),
+                *normalized_history,
+                ChatMessage(role="user", content=query),
+            ]
+            logger.info("[SYNTH] Generating final advisory with RAG context...")
+        else:
+            # No RAG results → fall back to LLM general knowledge
+            synthesis_messages = [
+                ChatMessage(role="system", content=self.llm_fallback_prompt),
+                *normalized_history,
+                ChatMessage(role="user", content=query),
+            ]
+            logger.info("[FALLBACK] No RAG results — using LLM general knowledge...")
+
         final_response = await self.llm.achat(messages=synthesis_messages)
         logger.info("[SYNTH] Advisory generated ✓")
 

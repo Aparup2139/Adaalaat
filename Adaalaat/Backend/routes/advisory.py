@@ -43,11 +43,19 @@ def submit_query():
 
     user_id = data.get("userId")
     history = data.get("history", [])  # Chat history for multi-turn context
+    client_name = data.get("clientName", "Client User")
 
     result, error = AdvisoryService.process_query(
         query_text, user_id=user_id, history=history
     )
     if error:
         return jsonify({"error": error}), 500
+
+    # Store the case for the Lawyer Dashboard
+    try:
+        from routes.case_routes import store_case
+        store_case(query_text, result, client_name=client_name)
+    except Exception:
+        pass  # Non-critical — don't fail the response
 
     return jsonify(result), 200

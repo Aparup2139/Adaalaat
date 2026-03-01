@@ -17,11 +17,15 @@ def create_app():
     from routes.advisory import advisory_bp
     from routes.lawyers import lawyers_bp
     from routes.documents import documents_bp
+    from routes.pdf_routes import pdf_bp
+    from routes.case_routes import cases_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(advisory_bp, url_prefix="/api/advisory")
     app.register_blueprint(lawyers_bp, url_prefix="/api/lawyers")
     app.register_blueprint(documents_bp, url_prefix="/api/documents")
+    app.register_blueprint(pdf_bp, url_prefix="/api/pdf")
+    app.register_blueprint(cases_bp, url_prefix="/api/cases")
 
     # ── Health Check ────────────────────────────────────────────
     @app.route("/api/health", methods=["GET"])

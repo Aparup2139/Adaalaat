@@ -19,4 +19,4 @@ class Config:
     HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "") or os.getenv("HF_TOKEN", "")
 
     # LLM Model
-    LLM_MODEL = os.getenv("LLM_MODEL", "meta-llama/Llama-3.1-8B-Instruct:novita")
+    LLM_MODEL = os.getenv("LLM_MODEL", "meta-llama/Llama-3.1-8B-Instruct")
